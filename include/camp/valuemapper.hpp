@@ -144,7 +144,23 @@ struct ValueMapper<bool>
     static bool from(bool source)                    {return source;}
     static bool from(long source)                    {return source != 0;}
     static bool from(double source)                  {return source != 0.;}
-    static bool from(const std::string& source)      {return boost::lexical_cast<bool>(source);}
+    static bool from(const std::string& source)      
+    {
+        bool result;
+        if(source.compare("true") == 0)
+        {
+            result = true;
+        }
+        else if(source.compare("false") == 0)
+        {
+            result = false;
+        }
+        else
+        {
+            result = ::boost::lexical_cast<bool>(source);
+        }
+        return result;
+    }
     static bool from(const camp::EnumObject& source) {return source.value() != 0;}
     static bool from(const camp::UserObject& source) {return source.pointer() != 0;}
 };

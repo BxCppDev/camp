@@ -68,6 +68,14 @@ ObjectHolderByRef<T>::ObjectHolderByRef(T* object)
 
 //-------------------------------------------------------------------------------------------------
 template <typename T>
+ObjectHolderByRef<T>::ObjectHolderByRef(::boost::shared_ptr<T>* object)
+    : m_object(object->get())
+    , m_alignedPtr(classCast(object, classByType<T>(), classByObject(object->get())))
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+template <typename T>
 void* ObjectHolderByRef<T>::object()
 {
     return m_alignedPtr;

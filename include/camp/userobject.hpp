@@ -74,6 +74,9 @@ public:
     template <typename T>
     UserObject(const T& object);
 
+    template<typename T>
+    UserObject(const T& object, std::string type);
+
     /**
      * \brief Construct the user object from a parent object and a member property
      *

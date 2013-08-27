@@ -71,7 +71,7 @@ namespace boost
 template <template <typename> class T, typename U>
 U* get_pointer(const T<U>& obj, typename enable_if<camp::detail::IsSmartPointer<T<U>, U> >::type* = 0)
 {
-    return obj.operator->();
+    return obj.get();
 }
 
 /**
@@ -83,7 +83,7 @@ U* get_pointer(const T<U>& obj, typename enable_if<camp::detail::IsSmartPointer<
 template <template <typename> class T, typename U>
 U* get_pointer(T<U>& obj, typename enable_if<camp::detail::IsSmartPointer<T<U>, U> >::type* = 0)
 {
-    return obj.operator->();
+    return obj.get();
 }
 
 } // namespace boost
