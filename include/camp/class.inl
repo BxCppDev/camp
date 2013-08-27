@@ -37,7 +37,7 @@ namespace detail
     template <typename T>
     void destroy(const UserObject& object)
     {
-        delete object.get<T*>();
+        //delete object.get<T*>();
     }
 }
 

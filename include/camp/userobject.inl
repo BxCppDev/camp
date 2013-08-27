@@ -47,6 +47,20 @@ UserObject::UserObject(const T& object)
 }
 
 //-------------------------------------------------------------------------------------------------
+template<typename T>
+UserObject::UserObject(const T& object, std::string type)
+    : m_class(&classByName(type))
+    , m_holder()
+    , m_parent()
+    , m_child(0)
+{
+    typedef detail::ObjectTraits<T&> Traits;
+    typedef detail::ObjectHolderByRef<typename Traits::DataType> Holder;
+
+    m_holder.reset(new Holder(Traits::getPointer(const_cast<T&>(object))));
+}
+
+//-------------------------------------------------------------------------------------------------
 template <typename T>
 typename detail::ObjectTraits<T>::RefReturnType UserObject::get() const
 {
