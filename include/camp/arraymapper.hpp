@@ -186,6 +186,43 @@ struct ArrayMapper<boost::array<T, N> >
 };
 
 /*
+ * Specialization of ArrayMapper for std::array
+ */
+template <typename T, std::size_t N>
+struct ArrayMapper<std::array<T, N> >
+{
+    typedef T ElementType;
+
+    static bool dynamic()
+    {
+        return false;
+    }
+
+    static std::size_t size(const std::array<T, N>&)
+    {
+        return N;
+    }
+
+    static const T& get(const std::array<T, N>& arr, std::size_t index)
+    {
+        return arr[index];
+    }
+
+    static void set(std::array<T, N>& arr, std::size_t index, const T& value)
+    {
+        arr[index] = value;
+    }
+
+    static void insert(std::array<T, N>&, std::size_t, const T&)
+    {
+    }
+
+    static void remove(std::array<T, N>&, std::size_t)
+    {
+    }
+};
+
+/*
  * Specialization of ArrayMapper for std::vector
  */
  template <typename T>
