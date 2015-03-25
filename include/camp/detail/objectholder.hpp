@@ -126,7 +126,7 @@ public:
      */
     ObjectHolderByRef(T* object);
 
-    ObjectHolderByRef(boost::shared_ptr<T>* object);
+    ObjectHolderByRef(std::shared_ptr<T>* object);
     
     /**
      * \brief Return a typeless pointer to the stored object

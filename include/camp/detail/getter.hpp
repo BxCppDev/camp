@@ -137,7 +137,7 @@ public:
 
 private:
 
-    boost::shared_ptr<GetterInterface<T> > m_getter; ///< Implementation of the getter
+    std::shared_ptr<GetterInterface<T> > m_getter; ///< Implementation of the getter
     T m_defaultValue; ///< Default value to return if no function or no object is specified
 };
 
