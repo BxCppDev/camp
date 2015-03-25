@@ -46,7 +46,7 @@
 #include <camp/detail/classmanager.hpp>
 #include <camp/detail/typeid.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+//#include <boost/shared_ptr.hpp>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -337,9 +337,9 @@ private:
         int offset;
     };
 
-    typedef boost::shared_ptr<Property> PropertyPtr;
-    typedef boost::shared_ptr<Function> FunctionPtr;
-    typedef boost::shared_ptr<Constructor> ConstructorPtr;
+    typedef std::shared_ptr<Property> PropertyPtr;
+    typedef std::shared_ptr<Function> FunctionPtr;
+    typedef std::shared_ptr<Constructor> ConstructorPtr;
     typedef std::vector<ConstructorPtr> ConstructorList;
     typedef std::vector<BaseInfo> BaseList;
 

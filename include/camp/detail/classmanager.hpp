@@ -172,7 +172,7 @@ private:
     {
         std::string id;
         std::string name;
-        boost::shared_ptr<Class> classPtr;
+        std::shared_ptr<Class> classPtr;
     };
 
     struct Id;

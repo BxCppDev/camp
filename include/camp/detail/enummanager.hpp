@@ -169,7 +169,7 @@ private:
     {
         std::string id;
         std::string name;
-        boost::shared_ptr<Enum> enumPtr;
+        std::shared_ptr<Enum> enumPtr;
     };
 
     struct Id;
