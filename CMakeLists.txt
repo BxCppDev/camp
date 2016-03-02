@@ -35,6 +35,10 @@ cmake_minimum_required(VERSION 2.8.8)
 # set project's name
 project(CAMP)
 
+# require C++11 standard by default
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # include project configuration
 include(${CMAKE_SOURCE_DIR}/cmake/Config.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/PackageFilename.cmake)
