@@ -161,7 +161,7 @@ add_library(camp ${CAMP_SRCS})
 
 # define the export macro
 if(BUILD_SHARED_LIBS)
-    set_target_properties(camp PROPERTIES DEFINE_SYMBOL CAMP_EXPORTS)
+    set_target_properties(camp PROPERTIES DEFINE_SYMBOL CAMP_EXPORTS SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}" VERSION "${VERSION_STR}")
 else()
     add_definitions(-DCAMP_STATIC)
 endif()
