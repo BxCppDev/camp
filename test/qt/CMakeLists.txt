@@ -49,18 +49,12 @@ set(CAMP_TEST_QT_SRCS
 find_package(Boost 1.38.0)
 
 # find Qt4
-find_package(Qt4 4.5.0 COMPONENTS QtCore REQUIRED)
-
-# add some useful macros and variables
-# (QT_USE_FILE is a variable defined by find_package( Qt4 ) that contains a path to CMake script)
-include(${QT_USE_FILE})
-
-# this will run moc
-QT4_WRAP_CPP(CAMP_TEST_QT_MOC_SRCS functionmapping.hpp propertymapping.hpp)
+find_package(Qt5 COMPONENTS Core REQUIRED)
 
 # include files search paths
 include_directories(
     ${CAMP_SOURCE_DIR}/include
+    ${Qt5Core_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
 )
 
@@ -70,8 +64,10 @@ add_definitions(-DBOOST_TEST_NO_LIB)
 # instruct CMake to build an executable from all of the source files
 add_executable(camptest-qt ${CAMP_TEST_QT_SRCS} ${CAMP_TEST_QT_MOC_SRCS})
 
+set_target_properties(camptest-qt PROPERTIES AUTOMOC TRUE)
+
 # last thing we have to do is to tell CMake what libraries our executable needs
-target_link_libraries(camptest-qt camp ${QT_LIBRARIES})
+target_link_libraries(camptest-qt camp ${Qt5Core_LIBRARIES})
 
 # Add the CTest
 add_test(camptest-qt camptest-qt)

@@ -28,6 +28,7 @@
 ****************************************************************************/
 
 #include "functionmapping.hpp"
+#include "logger.hpp"
 #include <camp/class.hpp>
 #include <camp/classget.hpp>
 #include <boost/test/unit_test.hpp>

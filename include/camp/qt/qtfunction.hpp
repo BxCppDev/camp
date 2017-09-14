@@ -159,7 +159,7 @@ private:
      */
     static std::string functionName(const QMetaMethod& metaMethod)
     {
-        QString signature = metaMethod.signature();
+        QString signature = metaMethod.methodSignature();
         return signature.left(signature.indexOf('(')).toStdString();
     }
 

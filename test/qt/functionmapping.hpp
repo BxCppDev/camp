@@ -86,10 +86,5 @@ namespace FunctionMappingTest
 
 CAMP_AUTO_TYPE_NONCOPYABLE(FunctionMappingTest::MyClass, &FunctionMappingTest::declare);
 
-// To make the boost.test logger happy
-inline std::ostream& operator<<(std::ostream& stream, const QString& string)
-{
-    return stream << string.toStdString();
-}
 
 #endif // CAMPTEST_QT_FUNCTIONMAPPING_HPP

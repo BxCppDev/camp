@@ -115,7 +115,6 @@ public:
             case QMetaType::UChar:        return QVariant::Char;
             case QMetaType::Float:        return QVariant::Double;
             case QMetaType::QObjectStar:  return QVariant::UserType;
-            case QMetaType::QWidgetStar:  return QVariant::UserType;
             case QMetaType::QCursor:      return QVariant::Cursor;
             case QMetaType::QDate:        return QVariant::Date;
             case QMetaType::QSize:        return QVariant::Size;
