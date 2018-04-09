@@ -28,6 +28,7 @@ qtc-gdbmacros/
 *.o
 *.a
 moc_*
+build/
 
 *.cmake
 CMakeFiles/

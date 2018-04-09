@@ -15,10 +15,10 @@
 ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ** copies of the Software, and to permit persons to whom the Software is
 ** furnished to do so, subject to the following conditions:
-** 
+**
 ** The above copyright notice and this permission notice shall be included in
 ** all copies or substantial portions of the Software.
-** 
+**
 ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -105,11 +105,11 @@ public:
             case QMetaType::QString:      return QVariant::String;
             case QMetaType::QByteArray:   return QVariant::ByteArray;
             case QMetaType::VoidStar:     return QVariant::Invalid;
-            case QMetaType::Long:         return QVariant::Int;
+            case QMetaType::Long:         return (sizeof(int) == sizeof(long)) ? QVariant::Int : QVariant::LongLong;
             case QMetaType::LongLong:     return QVariant::LongLong;
             case QMetaType::Short:        return QVariant::Int;
             case QMetaType::Char:         return QVariant::Char;
-            case QMetaType::ULong:        return QVariant::UInt;
+            case QMetaType::ULong:        return (sizeof(int) == sizeof(long)) ? QVariant::UInt : QVariant::ULongLong;
             case QMetaType::ULongLong:    return QVariant::ULongLong;
             case QMetaType::UShort:       return QVariant::UInt;
             case QMetaType::UChar:        return QVariant::Char;
@@ -166,18 +166,56 @@ public:
      */
     static QVariant valueToVariant(const camp::Value& value)
     {
+        auto toInt = [](const camp::Value& value)
+        {
+            return value.to<long>() > static_cast<long>(std::numeric_limits<int>::max())
+                    ? QVariant(value.to<long long>())
+                    : QVariant(value.to<int>());
+        };
         switch (value.type())
         {
             default:
             case camp::noType:     return QVariant();
             case camp::boolType:   return QVariant(value.to<bool>());
-            case camp::intType:    return QVariant(value.to<int>());
+            case camp::intType:    return toInt(value);
             case camp::realType:   return QVariant(value.to<double>());
             case camp::stringType: return QVariant(value.to<QString>());
             case camp::enumType:   return QVariant(value.to<int>());
             case camp::userType:   return QVariant();
         }
     }
+
+    /**
+     * \brief Convert a CAMP value to a QGenericArgument
+     *
+     * \param value Source camp::Value to convert
+     *
+     * \return \a value converted to a QGenericArgument
+     */
+    static QVariant argumentToVariant(const camp::Value& value, int metaType)
+    {
+        switch (metaType)
+        {
+            default:
+            case QMetaType::Void:         return QVariant();
+            case QMetaType::Bool:         return value.to<bool>();
+            case QMetaType::Int:          return value.to<int>();
+            case QMetaType::UInt:         return value.to<unsigned int>();
+            case QMetaType::Double:       return value.to<double>();
+            case QMetaType::QChar:        return value.to<char>();
+            case QMetaType::QString:      return value.to<QString>();
+            case QMetaType::Long:         return sizeof(int) == sizeof(long) ? value.to<int>(): value.to<long long>();
+            case QMetaType::LongLong:     return value.to<long long>();
+            case QMetaType::Short:        return value.to<short>();
+            case QMetaType::Char:         return value.to<char>();
+            case QMetaType::ULong:        return sizeof(int) == sizeof(long) ? value.to<unsigned int>(): value.to<unsigned long long>();
+            case QMetaType::ULongLong:    return value.to<unsigned long long>();;
+            case QMetaType::UShort:       return value.to<unsigned short>();;
+            case QMetaType::UChar:        return value.to<unsigned char>();;
+            case QMetaType::Float:        return value.to<float>();
+        }
+    }
+
 
     /**
      * \brief Convert a QVariant to a CAMP value

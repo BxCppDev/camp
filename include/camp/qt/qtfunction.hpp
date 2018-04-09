@@ -15,10 +15,10 @@
 ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ** copies of the Software, and to permit persons to whom the Software is
 ** furnished to do so, subject to the following conditions:
-** 
+**
 ** The above copyright notice and this permission notice shall be included in
 ** all copies or substantial portions of the Software.
-** 
+**
 ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -86,7 +86,7 @@ public:
 
             case 1:
             {
-                QVariant arg1 = QtHelper::valueToVariant(args[0]);
+                const auto arg1 = QtHelper::argumentToVariant(args[0], m_metaMethod.parameterType(0));
                 m_metaMethod.invoke(object.get<T*>(), Qt::DirectConnection, ret
                                   , QGenericArgument(arg1.typeName(), arg1.data()));
                 break;
@@ -94,8 +94,8 @@ public:
 
             case 2:
             {
-                QVariant arg1 = QtHelper::valueToVariant(args[0]);
-                QVariant arg2 = QtHelper::valueToVariant(args[1]);
+                const auto arg1 = QtHelper::argumentToVariant(args[0], m_metaMethod.parameterType(0));
+                const auto arg2 = QtHelper::argumentToVariant(args[1], m_metaMethod.parameterType(1));
                 m_metaMethod.invoke(object.get<T*>(), Qt::DirectConnection, ret
                                   , QGenericArgument(arg1.typeName(), arg1.data())
                                   , QGenericArgument(arg2.typeName(), arg2.data()));
@@ -104,9 +104,9 @@ public:
 
             case 3:
             {
-                QVariant arg1 = QtHelper::valueToVariant(args[0]);
-                QVariant arg2 = QtHelper::valueToVariant(args[1]);
-                QVariant arg3 = QtHelper::valueToVariant(args[2]);
+                const auto arg1 = QtHelper::argumentToVariant(args[0], m_metaMethod.parameterType(0));
+                const auto arg2 = QtHelper::argumentToVariant(args[1], m_metaMethod.parameterType(1));
+                const auto arg3 = QtHelper::argumentToVariant(args[2], m_metaMethod.parameterType(2));
                 m_metaMethod.invoke(object.get<T*>(), Qt::DirectConnection, ret
                                   , QGenericArgument(arg1.typeName(), arg1.data())
                                   , QGenericArgument(arg2.typeName(), arg2.data())
@@ -116,10 +116,10 @@ public:
 
             case 4:
             {
-                QVariant arg1 = QtHelper::valueToVariant(args[0]);
-                QVariant arg2 = QtHelper::valueToVariant(args[1]);
-                QVariant arg3 = QtHelper::valueToVariant(args[2]);
-                QVariant arg4 = QtHelper::valueToVariant(args[3]);
+                const auto arg1 = QtHelper::argumentToVariant(args[0], m_metaMethod.parameterType(0));
+                const auto arg2 = QtHelper::argumentToVariant(args[1], m_metaMethod.parameterType(1));
+                const auto arg3 = QtHelper::argumentToVariant(args[2], m_metaMethod.parameterType(2));
+                const auto arg4 = QtHelper::argumentToVariant(args[3], m_metaMethod.parameterType(3));
                 m_metaMethod.invoke(object.get<T*>(), Qt::DirectConnection, ret
                                   , QGenericArgument(arg1.typeName(), arg1.data())
                                   , QGenericArgument(arg2.typeName(), arg2.data())
@@ -130,11 +130,11 @@ public:
 
             case 5:
             {
-                QVariant arg1 = QtHelper::valueToVariant(args[0]);
-                QVariant arg2 = QtHelper::valueToVariant(args[1]);
-                QVariant arg3 = QtHelper::valueToVariant(args[2]);
-                QVariant arg4 = QtHelper::valueToVariant(args[3]);
-                QVariant arg5 = QtHelper::valueToVariant(args[4]);
+                const auto arg1 = QtHelper::argumentToVariant(args[0], m_metaMethod.parameterType(0));
+                const auto arg2 = QtHelper::argumentToVariant(args[1], m_metaMethod.parameterType(1));
+                const auto arg3 = QtHelper::argumentToVariant(args[2], m_metaMethod.parameterType(2));
+                const auto arg4 = QtHelper::argumentToVariant(args[3], m_metaMethod.parameterType(3));
+                const auto arg5 = QtHelper::argumentToVariant(args[4], m_metaMethod.parameterType(4));
                 m_metaMethod.invoke(object.get<T*>(), Qt::DirectConnection, ret
                                   , QGenericArgument(arg1.typeName(), arg1.data())
                                   , QGenericArgument(arg2.typeName(), arg2.data())

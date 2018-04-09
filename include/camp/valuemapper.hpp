@@ -15,10 +15,10 @@
 ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ** copies of the Software, and to permit persons to whom the Software is
 ** furnished to do so, subject to the following conditions:
-** 
+**
 ** The above copyright notice and this permission notice shall be included in
 ** all copies or substantial portions of the Software.
-** 
+**
 ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,8 +40,8 @@
 #include <camp/arraymapper.hpp>
 #include <camp/errors.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/type_traits.hpp>
-#include <boost/utility/enable_if.hpp>
+
+#include <type_traits>
 
 
 namespace camp_ext
@@ -94,13 +94,13 @@ namespace camp_ext
  *     {
  *         // The corresponding CAMP type is "string"
  *         static const int type = camp::string;
- *  
+ *
  *         // Convert from MyStringClass to std::string
  *         static std::string to(const MyStringClass& source)
  *         {
  *             return source.to_std_string();
  *         }
- * 
+ *
  *         // Convert from any type to MyStringClass
  *         // Be smart, juste reuse ValueMapper<std::string> :)
  *         template <typename T>
@@ -124,7 +124,9 @@ struct ValueMapper
     static camp::UserObject to(const T& source) {return camp::UserObject(source);}
 
     static T from(bool)                           {CAMP_ERROR(camp::BadType(camp::boolType,   camp::mapType<T>()));}
+    static T from(int)                            {CAMP_ERROR(camp::BadType(camp::intType,    camp::mapType<T>()));}
     static T from(long)                           {CAMP_ERROR(camp::BadType(camp::intType,    camp::mapType<T>()));}
+    static T from(long long)                      {CAMP_ERROR(camp::BadType(camp::intType,    camp::mapType<T>()));}
     static T from(double)                         {CAMP_ERROR(camp::BadType(camp::realType,   camp::mapType<T>()));}
     static T from(const std::string&)             {CAMP_ERROR(camp::BadType(camp::stringType, camp::mapType<T>()));}
     static T from(const camp::EnumObject&)        {CAMP_ERROR(camp::BadType(camp::enumType,   camp::mapType<T>()));}
@@ -135,7 +137,7 @@ struct ValueMapper
  * Specialization of ValueMapper for abstract types
  */
 template <typename T>
-struct ValueMapper<T, typename boost::enable_if<boost::is_abstract<T> >::type>
+struct ValueMapper<T, typename std::enable_if<std::is_abstract<T>::value >::type>
 {
     static const int type = camp::userType;
     static camp::UserObject to(const T& source) {return camp::UserObject(source);}
@@ -152,8 +154,9 @@ struct ValueMapper<bool>
 
     static bool from(bool source)                    {return source;}
     static bool from(long source)                    {return source != 0;}
+    static bool from(long long source)               {return source != 0;}
     static bool from(double source)                  {return source != 0.;}
-    static bool from(const std::string& source)      
+    static bool from(const std::string& source)
     {
         bool result;
         if(source.compare("true") == 0)
@@ -178,16 +181,18 @@ struct ValueMapper<bool>
  * Specialization of ValueMapper for integers
  */
 template <typename T>
-struct ValueMapper<T, typename boost::enable_if_c<boost::is_integral<T>::value
-                                                  && !boost::is_const<T>::value // to avoid conflict with ValueMapper<const T>
-                                                  && !boost::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
-                                                 >::type>
+struct ValueMapper<T, typename std::enable_if<std::is_integral<T>::value
+                                          && !std::is_const<T>::value // to avoid conflict with ValueMapper<const T>
+                                          && !std::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
+                                         >::type>
 {
     static const int type = camp::intType;
     static long to(T source) {return static_cast<long>(source);}
 
     static T from(bool source)                    {return static_cast<T>(source);}
+    static T from(int source)                     {return static_cast<T>(source);}
     static T from(long source)                    {return static_cast<T>(source);}
+    static T from(long long )                     {CAMP_ERROR(camp::BadType(camp::userType, camp::intType));}
     static T from(double source)                  {return static_cast<T>(source);}
     static T from(const std::string& source)      {return boost::lexical_cast<T>(source);}
     static T from(const camp::EnumObject& source) {return static_cast<T>(source.value());}
@@ -198,16 +203,19 @@ struct ValueMapper<T, typename boost::enable_if_c<boost::is_integral<T>::value
  * Specialization of ValueMapper for reals
  */
 template <typename T>
-struct ValueMapper<T, typename boost::enable_if_c<boost::is_float<T>::value
-                                                  && !boost::is_const<T>::value // to avoid conflict with ValueMapper<const T>
-                                                  && !boost::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
-                                                 >::type>
+struct ValueMapper<T, typename std::enable_if<std::is_floating_point<T>::value
+                                          && !std::is_const<T>::value // to avoid conflict with ValueMapper<const T>
+                                          && !std::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
+                                         >::type>
 {
     static const int type = camp::realType;
     static double to(T source) {return static_cast<double>(source);}
 
     static T from(bool source)                    {return static_cast<T>(source);}
+    static T from(int source)                     {return static_cast<T>(source);}
     static T from(long source)                    {return static_cast<T>(source);}
+    static T from(long long source)               {return static_cast<T>(source);}
+    static T from(float source)                   {return static_cast<T>(source);}
     static T from(double source)                  {return static_cast<T>(source);}
     static T from(const std::string& source)      {return boost::lexical_cast<T>(source);}
     static T from(const camp::EnumObject& source) {return static_cast<T>(source.value());}
@@ -224,7 +232,9 @@ struct ValueMapper<std::string>
     static const std::string& to(const std::string& source) {return source;}
 
     static std::string from(bool source)                    {return boost::lexical_cast<std::string>(source);}
+    static std::string from(int source)                     {return boost::lexical_cast<std::string>(source);}
     static std::string from(long source)                    {return boost::lexical_cast<std::string>(source);}
+    static std::string from(long long source)               {return boost::lexical_cast<std::string>(source);}
     static std::string from(double source)                  {return boost::lexical_cast<std::string>(source);}
     static std::string from(const std::string& source)      {return source;}
     static std::string from(const camp::EnumObject& source) {return source.name();}
@@ -238,10 +248,10 @@ struct ValueMapper<std::string>
  * Warning: special case for char[] and const char[], they are strings not arrays
  */
 template <typename T>
-struct ValueMapper<T, typename boost::enable_if_c<camp::detail::IsArray<T>::value
-                                                  && !boost::is_same<typename camp_ext::ArrayMapper<T>::ElementType, char>::value
-                                                  && !boost::is_same<typename camp_ext::ArrayMapper<T>::ElementType, const char>::value
-                                                 >::type>
+struct ValueMapper<T, typename std::enable_if<camp::detail::IsArray<T>::value
+                                              && !std::is_same<typename camp_ext::ArrayMapper<T>::ElementType, char>::value
+                                              && !std::is_same<typename camp_ext::ArrayMapper<T>::ElementType, const char>::value
+                                             >::type>
 {
     static const int type = camp::arrayType;
 };
@@ -267,16 +277,18 @@ struct ValueMapper<const char[N]>
  * Specialization of ValueMapper for enum types
  */
 template <typename T>
-struct ValueMapper<T, typename boost::enable_if_c<boost::is_enum<T>::value
-                                                  && !boost::is_const<T>::value // to avoid conflict with ValueMapper<const T>
-                                                  && !boost::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
-                                                 >::type>
+struct ValueMapper<T, typename std::enable_if<std::is_enum<T>::value
+                                              && !std::is_const<T>::value // to avoid conflict with ValueMapper<const T>
+                                              && !std::is_reference<T>::value // to avoid conflict with ValueMapper<T&>
+                                             >::type>
 {
     static const int type = camp::enumType;
     static camp::EnumObject to(T source) {return camp::EnumObject(source);}
 
     static T from(bool source)                    {return static_cast<T>(static_cast<long>(source));}
+    static T from(int source)                     {return static_cast<T>(source);}
     static T from(long source)                    {return static_cast<T>(source);}
+    static T from(long long source)               {return static_cast<T>(source);}
     static T from(double source)                  {return static_cast<T>(static_cast<long>(source));}
     static T from(const camp::EnumObject& source) {return static_cast<T>(source.value());}
     static T from(const camp::UserObject&)        {CAMP_ERROR(camp::BadType(camp::userType, camp::enumType));}
@@ -312,11 +324,13 @@ struct ValueMapper<camp::EnumObject>
     static const camp::EnumObject& to(const camp::EnumObject& source) {return source;}
     static const camp::EnumObject& from(const camp::EnumObject& source) {return source;}
 
-    static camp::UserObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,   camp::enumType));}
-    static camp::UserObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,    camp::enumType));}
-    static camp::UserObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,   camp::enumType));}
-    static camp::UserObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType, camp::enumType));}
-    static camp::UserObject from(const camp::UserObject&) {CAMP_ERROR(camp::BadType(camp::enumType,   camp::enumType));}
+    static camp::UserObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,     camp::enumType));}
+    static camp::UserObject from(int)                     {CAMP_ERROR(camp::BadType(camp::intType,      camp::enumType));}
+    static camp::UserObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,      camp::enumType));}
+    static camp::UserObject from(long long)               {CAMP_ERROR(camp::BadType(camp::intType,      camp::enumType));}
+    static camp::UserObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,     camp::enumType));}
+    static camp::UserObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType,   camp::enumType));}
+    static camp::UserObject from(const camp::UserObject&) {CAMP_ERROR(camp::BadType(camp::enumType,     camp::enumType));}
 };
 
 /*
@@ -329,11 +343,13 @@ struct ValueMapper<camp::UserObject>
     static const camp::UserObject& to(const camp::UserObject& source) {return source;}
     static const camp::UserObject& from(const camp::UserObject& source) {return source;}
 
-    static camp::UserObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,   camp::userType));}
-    static camp::UserObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,    camp::userType));}
-    static camp::UserObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,   camp::userType));}
-    static camp::UserObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType, camp::userType));}
-    static camp::UserObject from(const camp::EnumObject&) {CAMP_ERROR(camp::BadType(camp::enumType,   camp::userType));}
+    static camp::UserObject from(bool)                    {CAMP_ERROR(camp::BadType(camp::boolType,     camp::userType));}
+    static camp::UserObject from(int)                     {CAMP_ERROR(camp::BadType(camp::intType,      camp::userType));}
+    static camp::UserObject from(long)                    {CAMP_ERROR(camp::BadType(camp::intType,      camp::userType));}
+    static camp::UserObject from(long long)               {CAMP_ERROR(camp::BadType(camp::intType,      camp::userType));}
+    static camp::UserObject from(double)                  {CAMP_ERROR(camp::BadType(camp::realType,     camp::userType));}
+    static camp::UserObject from(const std::string&)      {CAMP_ERROR(camp::BadType(camp::stringType,   camp::userType));}
+    static camp::UserObject from(const camp::EnumObject&) {CAMP_ERROR(camp::BadType(camp::enumType,     camp::userType));}
 };
 
 /*

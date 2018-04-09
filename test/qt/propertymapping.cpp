@@ -13,10 +13,10 @@
 ** to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 ** copies of the Software, and to permit persons to whom the Software is
 ** furnished to do so, subject to the following conditions:
-** 
+**
 ** The above copyright notice and this permission notice shall be included in
 ** all copies or substantial portions of the Software.
-** 
+**
 ** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 ** FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,6 +32,8 @@
 #include <camp/classget.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <numeric>
+
 using namespace PropertyMappingTest;
 
 //-----------------------------------------------------------------------------
@@ -43,7 +45,7 @@ struct PropertyMappingFixture
 
         object.setBool(true);
         object.setInt(-10);
-        object.setULong(20);
+        object.setULong(std::numeric_limits<unsigned long>::max() - 1);
         object.setDouble(0.55);
         object.setString("hello");
         object.setEnum(MyClass::two);
@@ -91,7 +93,7 @@ BOOST_AUTO_TEST_CASE(get)
 {
     BOOST_CHECK_EQUAL(metaclass->property("m_bool_read").get(object).to<bool>(),           true);
     BOOST_CHECK_EQUAL(metaclass->property("m_int_read").get(object).to<int>(),             -10);
-    BOOST_CHECK_EQUAL(metaclass->property("m_ulong_read").get(object).to<unsigned long>(), 20);
+    BOOST_CHECK_EQUAL(metaclass->property("m_ulong_read").get(object).to<unsigned long>(), std::numeric_limits<unsigned long>::max() - 1);
     BOOST_CHECK_CLOSE(metaclass->property("m_double_read").get(object).to<double>(),       0.55, 1E-5);
     BOOST_CHECK_EQUAL(metaclass->property("m_string_read").get(object).to<QString>(),      "hello");
     BOOST_CHECK_EQUAL(metaclass->property("m_enum_read").get(object).to<MyClass::Enum>(),  MyClass::two);
@@ -102,14 +104,14 @@ BOOST_AUTO_TEST_CASE(set)
 {
     metaclass->property("m_bool").set(object, false);
     metaclass->property("m_int").set(object, -2);
-    metaclass->property("m_ulong").set(object, 50);
+    metaclass->property("m_ulong").set(object, std::numeric_limits<unsigned long>::max() - 1);
     metaclass->property("m_double").set(object, -8.8);
     metaclass->property("m_string").set(object, "bonjour");
     metaclass->property("m_enum").set(object, MyClass::three);
 
     BOOST_CHECK_EQUAL(metaclass->property("m_bool").get(object).to<bool>(),           false);
     BOOST_CHECK_EQUAL(metaclass->property("m_int").get(object).to<int>(),             -2);
-    BOOST_CHECK_EQUAL(metaclass->property("m_ulong").get(object).to<unsigned long>(), 50);
+    BOOST_CHECK_EQUAL(metaclass->property("m_ulong").get(object).to<unsigned long>(), std::numeric_limits<unsigned long>::max() - 1);
     BOOST_CHECK_CLOSE(metaclass->property("m_double").get(object).to<double>(),       -8.8, 1E-5);
     BOOST_CHECK_EQUAL(metaclass->property("m_string").get(object).to<QString>(),      "bonjour");
     BOOST_CHECK_EQUAL(metaclass->property("m_enum").get(object).to<MyClass::Enum>(),  MyClass::three);
