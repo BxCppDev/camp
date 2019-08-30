@@ -93,7 +93,7 @@ struct ObjectTraits<T*>
 {
     enum
     {
-        isWritable = !boost::is_const<T>::value,
+        isWritable = !std::is_const<T>::value,
         isRef = true
     };
 
@@ -113,7 +113,7 @@ struct ObjectTraits<T<U>, typename boost::enable_if<IsSmartPointer<T<U>, U> >::t
 {
     enum
     {
-        isWritable = !boost::is_const<U>::value,
+        isWritable = !std::is_const<U>::value,
         isRef = true
     };
 
@@ -122,7 +122,7 @@ struct ObjectTraits<T<U>, typename boost::enable_if<IsSmartPointer<T<U>, U> >::t
     typedef typename RawType<U>::Type DataType;
 
     static RefReturnType get(void* pointer) {return static_cast<U*>(pointer);}
-    static PointerType getPointer(T<U> value) {return boost::get_pointer(value);}
+    static PointerType getPointer(T<U> value) {return get_pointer(value);}
 };
 
 /*
@@ -149,7 +149,7 @@ struct ObjectTraits<T&, typename boost::disable_if<boost::is_pointer<typename Ob
 {
     enum
     {
-        isWritable = !boost::is_const<T>::value,
+        isWritable = !std::is_const<T>::value,
         isRef = true
     };
 

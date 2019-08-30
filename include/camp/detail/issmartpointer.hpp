@@ -35,56 +35,56 @@
 
 
 #include <camp/detail/yesnotype.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <type_traits>
+#include <memory>
 
 namespace camp
 {
-namespace detail
+
+template<class T>
+T* get_pointer(T *p)
 {
+    return p;
+}
+    
+template<class T>
+T* get_pointer(std::unique_ptr<T> const& p)
+{
+    return p.get();
+}
+
+template<class T>
+T* get_pointer(std::shared_ptr<T> const& p)
+{
+    return p.get();
+}
+
+namespace detail {
+    
 /**
  * \brief Utility class which tells at compile-time if a type T is a smart pointer to a type U
- *
- * To detect a smart pointer type, we check using SFINAE if T implements an operator -> returning a U*
  */
 template <typename T, typename U>
 struct IsSmartPointer
+{    
+    enum {value = false};
+};
+
+template <typename T, typename U>
+struct IsSmartPointer<std::unique_ptr<T>, U>
 {
-    enum {value = (!std::is_pointer<T>::value && !std::is_same<T, U>::value) };
+    enum {value = true};
+};
+
+template <typename T, typename U>
+struct IsSmartPointer<std::shared_ptr<T>, U>
+{
+    enum {value = true};
 };
 
 } // namespace detail
 
 } // namespace camp
-
-
-namespace boost
-{
-/**
- * \brief Specialization of boost::get_pointer for all smart pointer types (const version)
- *
- * This function is specialized for every type T for which IsSmartPointer<T> is true. It makes
- * the stored value available for all boost algorithms (especially for boost::bind).
- */
-template <template <typename> class T, typename U>
-U* get_pointer(const T<U>& obj, typename enable_if<camp::detail::IsSmartPointer<T<U>, U> >::type* = 0)
-{
-    return obj.get();
-}
-
-/**
- * \brief Specialization of boost::get_pointer for all smart pointer types (non-const version)
- *
- * This function is specialized for every type T for which IsSmartPointer<T> is true. It makes
- * the stored value available for all boost algorithms (especially for boost::bind).
- */
-template <template <typename> class T, typename U>
-U* get_pointer(T<U>& obj, typename enable_if<camp::detail::IsSmartPointer<T<U>, U> >::type* = 0)
-{
-    return obj.get();
-}
-
-} // namespace boost
 
 
 #endif // CAMP_DETAIL_ISSMARTPOINTER_HPP
